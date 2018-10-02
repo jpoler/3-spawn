@@ -1,0 +1,7 @@
+The exception level can be read with the following command:
+
+mrs <Xn>, CurrentEl
+
+Note that this is part of the process state, which is a system register. Note
+that on Aarch64, there is no Current Process Status Register (CPSR), and
+individual fields are accessed by name such as CurrentEl.

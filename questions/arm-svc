@@ -1,0 +1,4 @@
+I'll assume that the question meant to specify that we are in Aarch64 execution
+mode.
+
+The address is VBAR_ELx offset plus 0x400, since svc is a syncronous exception.

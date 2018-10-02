@@ -1,0 +1,2 @@
+msr DAIFClr, 0xF
+msr DAIFSet, 0x2

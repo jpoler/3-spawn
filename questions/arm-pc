@@ -1,0 +1,15 @@
+x30 is the default link register, but an alternative can be provided:
+
+ret xN
+
+more specifically, to return to address A, it would be:
+
+mov x9, <A>
+ret x9
+
+For eret, the ELR_n register must be set:
+
+
+mov x9, <A>
+msr ELR_<n>, x9
+eret

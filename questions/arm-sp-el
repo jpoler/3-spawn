@@ -1,0 +1,10 @@
+I'm assuming that this question is asking about a program that was executing in
+EL0 before the exception occured, because there is no option to switch the stack
+pointer to that stored for an arbitrary ELn, the only options are use the SP for
+the current exception level, or use the SP for EL0.
+
+msr SPSel, #0
+# move address B into the stack pointer
+mov SP, #B
+# switch back to SP_n
+msr SPSel, #1
