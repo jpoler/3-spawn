@@ -117,7 +117,7 @@ switch_to_el1:
     // change execution level to EL1 (ref: C5.2.19)
     // 0x3c5 -> 0b0011 1100 0101
     // bits 3:0 -> state exception was taken from. 0101 indicates EL1h, which
-    // means to use SP for EL1, not EL0.
+    // means that we came from EL1 using SP for EL1.
     // bit 6: mask FIQ
     // bit 7: mask IRQ
     // bit 8: mask Serror
