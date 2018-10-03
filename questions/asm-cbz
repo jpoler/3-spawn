@@ -1,0 +1,6 @@
+cbz is compare and branch if zero. This means that if you are checking for zero
+in a conditional branch, then you can use one instruction to do the conditional
+branch as opposed to:
+
+cmp xN, #0
+beq <label>

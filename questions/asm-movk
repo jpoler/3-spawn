@@ -1,0 +1,5 @@
+// the immediate is more than 16 bits so we need multiple instructions to set up
+// the register with the load value.
+mov   x9, 0xBCDE
+movk  x9, 0xA, LSL #16
+msr   ELR_EL1, x9
