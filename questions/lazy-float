@@ -1,0 +1,7 @@
+CPACR_EL1.FPEN = 00 or 10 will cause instructions using SVE, Advanced SIMD, or
+floating point to be trapped. So when a process starts, we can set
+CPACR_EL1.FPEN to 00 or 10 (adding CPACR to the trap frame). Then, when we trap
+after any instruction using SIMD/FP registers, we can disable trapping by
+setting CPACR_EL1.FPEN = 11. When we trap, we can check FPEN and if it's value
+is 10, we don't need to load them into the trap frame during
+context_{save,restore}.
