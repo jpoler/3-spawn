@@ -1,0 +1,5 @@
+Yes, the process must trust the kernel. The kernel has unrestricted access to
+all of the processes resources, including memory, disk, network, etc. One
+example of this is that a process could store private keys or other secrets in
+memory or on disk. If the kernel is compromised, it could read these secrets and
+transmit them over the network or do something else damaging.
