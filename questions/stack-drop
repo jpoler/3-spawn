@@ -1,0 +1,2 @@
+Stack implements drop. Whenever stack goes out of scope, the drop method will be
+called, which releases the allocated memory using Stack's pointer and layout.
