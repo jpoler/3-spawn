@@ -1,0 +1,84 @@
+Two processes sharing a stack would mean that they are both using the same
+region as it physically grows and shrinks. Potentially (not sure based on the
+question) processes would use the same stack pointer. This of course would be a
+horrible idea.
+
+It would be very likely that processes would crash very soon after starting
+because (again assuming that they use the same sp) of race conditions. Before
+too long, one process would increment the sp with the other being unaware that
+this had happened. The unaware process would attempt to read / write the wrong
+data, causing corruption and other nasty undefined behavior.
+
+In order for two processes to share the same stack, there would need to be a
+thread-safe shared object that managed access to the stack and allocated new
+stack frames. Let's pretend this object is called SharedStack. SharedStack could
+have methods push and pop, where these methods additionally required a thread_id
+parameter. This would allow the stack to track the current head of the stack for
+each process. The tricky part is that fragmentation would develop very quickly,
+if for example a hole was created by a pop, and the next call to push requested
+a frame that did not fit in the hole that was created.
+
+
+Time step 1
+===========
+------------------------
+Thread A Frame 1 Size 16
+------------------------
+Thread B Frame 1 Size 16
+------------------------
+Thread A Frame 2 Size 32
+------------------------
+Thread A Frame 3 Size 32
+------------------------
+
+Time step 2 (Thread B pops)
+===========================
+------------------------
+Thread A Frame 1 Size 16
+------------------------
+< Free Space > Size 16
+------------------------
+Thread A Frame 2 Size 32
+------------------------
+Thread A Frame 3 Size 32
+------------------------
+
+Time step 3 (Thread A pushes)
+===========================
+------------------------
+Thread A Frame 1 Size 16
+------------------------
+< Free Space > Size 16
+------------------------
+Thread A Frame 2 Size 32
+------------------------
+Thread A Frame 3 Size 32
+------------------------
+Thread A Frame 4 Size 16
+------------------------
+
+Time step 4 (Thread B pushes)
+===========================
+------------------------
+Thread A Frame 1 Size 16
+------------------------
+< Free Space > Size 16
+------------------------
+Thread A Frame 2 Size 32
+------------------------
+Thread A Frame 3 Size 32
+------------------------
+Thread A Frame 4 Size 16
+------------------------
+Thread B Frame 1 Size 32
+------------------------
+
+This scheme feels a little bit like an allocator, but the bookkeeping could
+actually be even more complicated since each allocated frame also has a thread
+owner, and the series of frames must be tracked.
+
+In practice, this would only work if we were able to trap into the kernel every
+time a process tried to manipulate the stack pointer. It also relies on the
+process staying within the boundaries of every stack frame it has allocated.
+This means that process couldn't address into a previous stack frame using the
+current stack pointer without address translation from the kernel via trapping.
