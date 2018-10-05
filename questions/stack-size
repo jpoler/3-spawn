@@ -1,0 +1,12 @@
+If a process had to be aware of it's stack size and a special API in order to
+increase the size of the stack, we wouldn't be able to run generic programs
+compiled for a posix API for example.
+
+Nevertheless, this can be accomplished if the process has access to the
+system-wide allocator. If it is aware of it's stack size, it could check every
+time it moves the stack pointer to ensure that it doesn't overflow the available
+space. When it needs more space, it could request double the current stack size,
+and then copy it's current stack to the new stack, and then set the stack
+pointer to point within the new stack. Unfortunately, this is quite a bit of
+extra mental burden for the process, but without virtual memory, I'm not sure of
+another way to accomplish the illusion of an infinite stack size.
