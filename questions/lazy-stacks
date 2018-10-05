@@ -1,0 +1,5 @@
+This will be accomplished through paging. As the stack pointer decreases, it
+will eventually move on to a page that has not yet been allocated. When the
+process tries to access memory at an address within that page, a page fault will
+occur, which will allow the kernel to use the allocator to allocate a new page
+and add a page table entry.
