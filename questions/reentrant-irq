@@ -1,0 +1,34 @@
+There is quite a bit of depth to this question.
+
+Re-enabling interrupts during an exception is described in the programmer's
+guide in section 10.5. The idea is that as long as corruptible registers,
+SPSR_ELx, ELR_ELx are preserved beforehand, enabling interrupts will not result
+in an exception loop, because upon ERET from the nested exception handler, the
+PSTATE and ELR_ELx registers are restored from the stack.
+
+
+The Generic Interrupt Controller works (GIC), as described in the programmer's
+guide section 10.6 also is involved. The CPU interface is the physical link
+between the GIC and a CPU core. There are four states that a particular CPU
+Interface can be in:
+
+1. Inactive -> there are no interrupts
+2. Pending -> an interrupt has been signaled to the core, but not acked
+3. Active -> the core is currently processing the interrupt
+4. Pending and Active -> there are pending interrupts, but the core is currently
+   already processing an interrupt
+
+Each core will never be interrupted while it is active. However, it is possible
+that the operating system can re-enable interrupts after saving the
+aforementioned corruptible state, and then mark interrupt handling complete
+before actually handling the interrupt. This causes the CPU interface to return
+to either the Inactive or Pending states, where the CPU can receive further
+interrupts. This leads to a situation where arbitrary nesting of interrupt
+handlers can occur. This does come with a cost, which is that interrupt handlers
+must not block, ever. Also, interrupt handlers should ideally be bug free, and
+thus not themselves sources of exceptions that could cause further nesting.
+
+After reading around a little bit, it looks like linux IRQ handlers do mask IRQs
+while the handler is running, but FIQs are unmasked. This greatly simplifies
+programming interrupt handlers if they cannot be entered recursively. I imagine
+that I'll be refining the answer to this question as my understanding improves.
