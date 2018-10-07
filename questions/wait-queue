@@ -1,0 +1,15 @@
+The problem with only one queue for ready and wait is that if a process isn't
+ready when it's turn comes up, it has to wait for an entire round before it will
+have a chance to run again. At first, every process can be added to the ready
+queue, even if it is actually waiting. When we encounter a process in the wait
+state, we check it, and if the awaited event has not yet occured, then we put it
+on the wait queue. This way our scheduler would then work would be as follows:
+
+1. Check the wait queue, checking all processes looking for one that is ready.
+If we find one, remove it from the wait queue and schedule it. When it is done
+running it goes back on the ready queue.
+
+2. If we don't find any processes where the awaited event has occured on the
+wait queue, we go to the ready queue, assigning awaiting processes where the
+event has not yet occured to the wait queue, and run the first processes that is
+either ready, or waiting where the event has occured.
