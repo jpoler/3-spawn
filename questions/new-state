@@ -1,0 +1,5 @@
+The scheduler may not know the new state because the state of the process can
+come from system calls or events that are generated externally to the scheduler.
+This is actually a good thing, because it enforces modularity. The scheduler's
+sole job is to track the list of processes and provide a next process when asked
+for a switch.
