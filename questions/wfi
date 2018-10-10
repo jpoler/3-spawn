@@ -1,0 +1,30 @@
+It is first important to note that if not configured correctly, wfi will not
+actually cause a the PE (processing element, which is consistently used to refer
+to a core across the arm documentation) to enter a low-power state. However, if
+the correct system registers are configured, then wfi will wait until the next
+interrupt is delivered to it.
+
+This is desirable, and can assure ourselves of this by thinking of the three
+possible process states:
+
+Ready => There's work to do, we won't wfi
+Running => This process is likely being taken out of the running state if the
+           scheduler is looking at it
+Waiting => We are waiting for an event to occur
+
+If a process is transitioning from Running -> Ready, then the process was simply
+pre-empted, and we can always reschedule it and therefore won't wfi.
+
+There is no Running -> Running transition from the perspective of being within
+the scheduler. Instead we will transition Running -> Ready or Running -> Waiting
+and then immediately transition back to Running.
+
+Running -> Waiting: In this case we are waiting for an event. These events will
+all ultimately come from interrupts.
+
+From the reference manual D1.17.2: All interrupts will wake the processor
+regardless of PSTATE.{I, A, F}.
+
+Since we acknowledge that timer interrupt before handling it, that means that
+even if no IO interrupts occur, the scheduling timer interrupt will occur, which
+will cause the handler to wake again.
