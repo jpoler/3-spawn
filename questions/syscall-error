@@ -1,0 +1,5 @@
+The advantage is that the calling convention is much more in line with the way
+calling conventions work for a regular function call. Since all of the return
+registers must be clobbered, it doesn't actually save any work. It also allows
+for less ambiguity as there is not question whether the return value is an
+actual result or an error.
