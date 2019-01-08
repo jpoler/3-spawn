@@ -1,0 +1,3 @@
+The actual time slept should never be less than the requested time. However, in practice I expect that the time slept will always be greater than the requested time.
+
+This depends on how you define "time slept" parameter that gets returned from the sleep syscall. If the handler reads the system clock as soon as it is called, then the value may be pretty close, though there will still be quite a few cycles involved in cleaning up the handler, restoring the trap frame, and performing an ERET to the process.
